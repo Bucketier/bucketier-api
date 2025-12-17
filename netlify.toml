@@ -7,6 +7,6 @@
   from = "/*"
   to = "/:splat"
   [redirects.rate_limit] # Protecting the entire app.
-      window_limit = 50
-      window_size = 60
+      window_limit = 2 # 2  = Request Amount
+      window_size = 10 # 10 = Seconds
       aggregate_by = ["domain", "ip"]
