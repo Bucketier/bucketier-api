@@ -1,0 +1,25 @@
+{
+  "name": "bucketier-api",
+  "version": "1.0.0",
+  "description": "ExpressJS with Firebase backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bucketier/bucketier-api.git"
+  },
+  "author": "Smudge",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/Bucketier/bucketier-api/issues"
+  },
+  "homepage": "https://github.com/Bucketier/bucketier-api#readme",
+  "dependencies": {
+    "@netlify/functions": "^5.1.1",
+    "@types/express": "^5.0.6",
+    "express": "^5.2.1",
+    "serverless-http": "^4.0.0"
+  }
+}
