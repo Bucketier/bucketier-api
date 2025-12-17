@@ -3,6 +3,8 @@ import serverless from "serverless-http";
 import admin, { ServiceAccount } from "firebase-admin";
 import dotenv from "dotenv";
 
+const LIST_ENTRY_TTL_SECONDS = 10;
+
 const api = express();
 const router = Router();
 dotenv.config();
