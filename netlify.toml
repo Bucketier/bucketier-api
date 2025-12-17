@@ -3,3 +3,10 @@
   node_bundler = "esbuild"
 [build]
   command = "echo Building Functions"
+[[redirects]]
+  from = "/*"
+  to = "/:splat"
+  [redirects.rate_limit] # Protecting the entire app.
+      window_limit = 50
+      window_size = 60
+      aggregate_by = ["domain"]
