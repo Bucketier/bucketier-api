@@ -9,4 +9,4 @@
   [redirects.rate_limit] # Protecting the entire app.
       window_limit = 50
       window_size = 60
-      aggregate_by = ["domain"]
+      aggregate_by = ["domain", "ip"]
