@@ -47,6 +47,45 @@ router.get('/list', async (req, res) => {
   return res.status(200).send(documents.docs.map(doc => doc.data()));
 });
 
+router.post('/list', async (req, res) => {
+
+  if (!req.body || !req.body.list_id || !req.body.encrypted_data) {
+    return res.status(400).send({ error: 'Missing/Empty required body fields.' });
+  }
+
+  const timeStamp = admin.firestore.Timestamp.now();
+  const expiresAt = admin.firestore.Timestamp.fromMillis(Date.now() + LIST_ENTRY_TTL_SECONDS * 1000);
+  const collection = database.collection("list_entry");
+
+  await database.runTransaction(async (transaction) => {
+    const expiredQuery = collection.where("expiresAt", "<=", timeStamp).limit(1);
+    const snapshot = await transaction.get(expiredQuery);
+
+    // Update a existing document if one has expired.
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      transaction.update(doc.ref, {
+        list_id: req.body.list_id,
+        encrypted_data: req.body.encrypted_data,
+        expiresAt,
+        timeStamp,
+      });
+      return;
+    }
+    
+    // Create a new document if non have expired.
+    const docRef = collection.doc();
+    transaction.set(docRef, {
+      list_id: req.body.list_id,
+      encrypted_data: req.body.encrypted_data,
+      expiresAt,
+      timeStamp,
+    });
+  });
+  
+  res.sendStatus(200);
+});
+
 // Export
 api.use("/.netlify/functions/api", router);
 export const handler = serverless(api);
