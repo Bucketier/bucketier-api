@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import serverless from "serverless-http";
 import admin, { ServiceAccount } from "firebase-admin";
 import dotenv from "dotenv";
+import { Config } from "@netlify/functions";
 
 const LIST_ENTRY_TTL_SECONDS = 10;
 
@@ -91,3 +92,12 @@ router.post('/list', async (req, res) => {
 // Export
 api.use("/.netlify/functions/api", router);
 export const handler = serverless(api);
+
+export const config: Config = {
+  path: "/",
+  rateLimit: {
+    windowLimit: 2, // 2  = Request Amount
+    windowSize: 10, // 10 = Seconds
+    aggregateBy: ["ip", "domain"],
+  }
+};
