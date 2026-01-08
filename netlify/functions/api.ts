@@ -2,7 +2,6 @@ import express, { Router } from "express";
 import serverless from "serverless-http";
 import admin, { ServiceAccount } from "firebase-admin";
 import dotenv from "dotenv";
-import { Config } from "@netlify/functions";
 
 const LIST_ENTRY_TTL_SECONDS = 10;
 
@@ -36,29 +35,30 @@ api.use(express.json({
 }));
 
 // Routes
-router.get('/list', async (req, res) => {
+router.get('/bucket', async (req, res) => {
+  const { bucketId } = req.query;
 
-  if (!req.body || !req.body.list_id) {
-    return res.status(400).send({ error: 'Missing/Empty required body fields.' });
+  if (!bucketId) {
+    return res.status(400).send({ error: 'Missing/Empty required query fields.' });
   }
 
-  const documents = await database.collection("list_entry")
-    .where("list_id", "==", req.body.list_id)
+  const documents = await database.collection("buckets")
+    .where("bucket_id", "==", bucketId)
     .limit(100)
     .get();
 
   return res.status(200).send(documents.docs.map(doc => doc.data()));
 });
 
-router.post('/list', async (req, res) => {
+router.post('/bucket', async (req, res) => {
 
-  if (!req.body || !req.body.list_id || !req.body.encrypted_data) {
+  if (!req.body || !req.body.bucket_id || !req.body.encrypted_data) {
     return res.status(400).send({ error: 'Missing/Empty required body fields.' });
   }
 
   const timeStamp = admin.firestore.Timestamp.now();
   const expiresAt = admin.firestore.Timestamp.fromMillis(Date.now() + LIST_ENTRY_TTL_SECONDS * 1000);
-  const collection = database.collection("list_entry");
+  const collection = database.collection("buckets");
 
   await database.runTransaction(async (transaction) => {
     const expiredQuery = collection.where("expiresAt", "<=", timeStamp).limit(1);
@@ -68,7 +68,7 @@ router.post('/list', async (req, res) => {
     if (!snapshot.empty) {
       const doc = snapshot.docs[0];
       transaction.update(doc.ref, {
-        list_id: req.body.list_id,
+        bucket_id: req.body.bucket_id,
         encrypted_data: req.body.encrypted_data,
         expiresAt,
         timeStamp,
@@ -79,7 +79,7 @@ router.post('/list', async (req, res) => {
     // Create a new document if non have expired.
     const docRef = collection.doc();
     transaction.set(docRef, {
-      list_id: req.body.list_id,
+      bucket_id: req.body.bucket_id,
       encrypted_data: req.body.encrypted_data,
       expiresAt,
       timeStamp,
