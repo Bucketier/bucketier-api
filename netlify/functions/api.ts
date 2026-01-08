@@ -52,7 +52,7 @@ router.get('/bucket', async (req, res) => {
 
 router.post('/bucket', async (req, res) => {
 
-  if (!req.body || !req.body.bucket_id || !req.body.encrypted_data) {
+  if (!req.body || !req.body.bucket_id || !req.body.encrypted_data || !req.body.nonce) {
     return res.status(400).send({ error: 'Missing/Empty required body fields.' });
   }
 
@@ -70,6 +70,7 @@ router.post('/bucket', async (req, res) => {
       transaction.update(doc.ref, {
         bucket_id: req.body.bucket_id,
         encrypted_data: req.body.encrypted_data,
+        nonce: req.body.nonce,
         expiresAt,
         timeStamp,
       });
@@ -81,6 +82,7 @@ router.post('/bucket', async (req, res) => {
     transaction.set(docRef, {
       bucket_id: req.body.bucket_id,
       encrypted_data: req.body.encrypted_data,
+      nonce: req.body.nonce,
       expiresAt,
       timeStamp,
     });
