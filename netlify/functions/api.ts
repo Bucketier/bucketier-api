@@ -36,14 +36,14 @@ api.use(express.json({
 
 // Routes
 router.get('/bucket', async (req, res) => {
-  const { bucketId } = req.query;
+  const { bucket_id } = req.query;
 
-  if (!bucketId) {
+  if (!bucket_id) {
     return res.status(400).send({ error: 'Missing/Empty required query fields.' });
   }
 
   const documents = await database.collection("buckets")
-    .where("bucket_id", "==", bucketId)
+    .where("bucket_id", "==", bucket_id)
     .limit(100)
     .get();
 
