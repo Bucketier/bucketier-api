@@ -52,7 +52,7 @@ router.get('/bucket', async (req, res) => {
 
 router.post('/bucket', async (req, res) => {
 
-  if (!req.body || !req.body.bucket_id || !req.body.encrypted_data || !req.body.nonce) {
+  if (!req.body || !req.body.bucket_id || !req.body.lists) {
     return res.status(400).send({ error: 'Missing/Empty required body fields.' });
   }
 
@@ -69,8 +69,7 @@ router.post('/bucket', async (req, res) => {
       const doc = snapshot.docs[0];
       transaction.update(doc.ref, {
         bucket_id: req.body.bucket_id,
-        encrypted_data: req.body.encrypted_data,
-        nonce: req.body.nonce,
+        lists: req.body.lists,
         expiresAt,
         timeStamp,
       });
@@ -81,8 +80,7 @@ router.post('/bucket', async (req, res) => {
     const docRef = collection.doc();
     transaction.set(docRef, {
       bucket_id: req.body.bucket_id,
-      encrypted_data: req.body.encrypted_data,
-      nonce: req.body.nonce,
+      lists: req.body.lists,
       expiresAt,
       timeStamp,
     });
