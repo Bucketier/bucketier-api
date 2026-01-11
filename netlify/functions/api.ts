@@ -3,7 +3,13 @@ import serverless from "serverless-http";
 import admin, { ServiceAccount } from "firebase-admin";
 import dotenv from "dotenv";
 
-const LIST_ENTRY_TTL_SECONDS = 10;
+// 10s sync time.
+// 20s live time.
+//
+// me ->
+// 10s
+// <- you
+const LIST_ENTRY_TTL_SECONDS = 20;
 
 const api = express();
 const router = Router();
