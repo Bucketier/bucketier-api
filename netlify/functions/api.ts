@@ -7,8 +7,14 @@ import dotenv from "dotenv";
 // 20s live time.
 //
 // me ->
+// <- me
 // 10s
+// me ->
+// <- me
+// you ->
 // <- you
+// 10s
+// <- me
 const LIST_ENTRY_TTL_SECONDS = 20;
 
 const api = express();
